@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95f04cf0c6247a9903e2a4b152935f4, type: 3}
+  m_Name: World Settings
+  m_EditorClassIdentifier: 
+  terrain: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  noiseSettings:
+    Lacunarity: 1
+    NormalizeMode: 1
+    Octaves: 4
+    Persistence: 0.365
+    SampleCentre: {x: 0, y: 0}
+    Scale: 30
+    Seed: 0

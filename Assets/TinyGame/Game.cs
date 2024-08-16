@@ -7,10 +7,12 @@ namespace TinyGame
 {
     public class Game : MonoBehaviour
     {
-        [Button]
-        void Test()
-        {
+        public World world;
 
+        void Start()
+        {
+            world = new World();
+            world.Make();
         }
     }
 }
