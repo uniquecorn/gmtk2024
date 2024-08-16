@@ -1,0 +1,3 @@
+[submodule "Assets/Castle"]
+	path = Assets/Castle
+	url = https://github.com/RapBot-Studios/Castle.git
