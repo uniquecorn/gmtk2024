@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a4b7e29f-696f-4ceb-ac92-15497e14d182" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/World Settings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/World Settings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/TreeObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/TreeObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/World.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldSettings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,19 +38,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "settings.editor.selected.configurable": "reference.settings.project.statistic.project.settings"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;/Users/elijahjames/Library/Application Support/JetBrains/Rider2024.1/resharper-host/DecompilerCache&quot;,
-      &quot;/Users/elijahjames/Library/Application Support/JetBrains/Rider2024.1/resharper-host/SourcesCache&quot;,
-      &quot;/Users/elijahjames/Library/Application Support/Symbols/src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "/Users/elijahjames/Library/Application Support/JetBrains/Rider2024.1/resharper-host/DecompilerCache",
+      "/Users/elijahjames/Library/Application Support/JetBrains/Rider2024.1/resharper-host/SourcesCache",
+      "/Users/elijahjames/Library/Application Support/Symbols/src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2022.3.42f1/Unity.app/Contents/MacOS/Unity" />
@@ -101,6 +102,7 @@
       <workItem from="1723827948321" duration="2313000" />
       <workItem from="1723830737401" duration="11651000" />
       <workItem from="1723842467924" duration="13089000" />
+      <workItem from="1723856153191" duration="1790000" />
     </task>
     <servers />
   </component>

@@ -92,7 +92,23 @@ namespace TinyGame
             }
             return false;
         }
-
+        public void GetPositionIndex(WorldObject worldObject,out int posIndex, out int totalIndex)
+        {
+            var total = 0;
+            var current = 0;
+            var chunk = worldObject.GetChunk();
+            for (var i = 0; i < chunk.immovableObjects.Count; i++)
+            {
+                //if(gObjects[i].IgnorePositioningIndex)continue;
+                if (chunk.immovableObjects[i].position == worldObject.position)
+                {
+                    if (chunk.immovableObjects[i] == worldObject) current = total;
+                    total++;
+                }
+            }
+            posIndex = current;
+            totalIndex = total;
+        }
         // public bool TryPath(CastleGrid start, CastleGrid end, int objectValue, out List<CastleGrid> path)
         // {
         //

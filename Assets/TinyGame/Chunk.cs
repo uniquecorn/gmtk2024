@@ -139,10 +139,8 @@ namespace TinyGame
 
             foreach (var o in immovableObjects)
             {
-                if (o.InChunk(this, out var localPosition))
-                {
-                    _gridIndex[localPosition.x * ChunkSize + localPosition.y] += o.WalkableIndex;
-                }
+                if (!o.InChunk(this, out var localPosition)) continue;
+                _gridIndex[localPosition.x * ChunkSize + localPosition.y] += o.WalkableIndex;
             }
         }
     }

@@ -19,6 +19,7 @@ namespace TinyGame
         public ChunkRender()
         {
             rendered = false;
+            spawn = new List<WorldSpawn>(Chunk.ChunkSize);
             chunkTransform = new GameObject().transform;
             meshFilter = chunkTransform.gameObject.AddComponent<MeshFilter>();
             meshRenderer = chunkTransform.gameObject.AddComponent<MeshRenderer>();
@@ -103,6 +104,7 @@ namespace TinyGame
             foreach (var o in chunk.immovableObjects)
             {
                 o.Spawn(out var s);
+                spawn.Add(s);
                 s.transform.SetParent(chunkTransform);
             }
             rendered = true;
