@@ -14,6 +14,13 @@ namespace TinyGame
             base.OnSpawn();
             Pathfind();
         }
+
+        public override void UpdateSprites()
+        {
+            base.UpdateSprites();
+            transform.position = worldObject.virtualPosition;
+        }
+
         [Button]
         void Pathfind()
         {

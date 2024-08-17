@@ -7,7 +7,8 @@ namespace TinyGame
     public abstract class WorldSpawn : CastleObject
     {
         public virtual void OnSpawn() { }
-        public abstract Vector3 GetVectorPosition();
+
+
     }
     public abstract class WorldSpawn<T> : WorldSpawn where T : WorldObject
     {
@@ -16,13 +17,21 @@ namespace TinyGame
         public void SetWorldObject(T worldObject)
         {
             this.worldObject = worldObject;
-            transform.position = GetVectorPosition();
+            transform.position = worldObject.virtualPosition;
             OnSpawn();
         }
-        public override Vector3 GetVectorPosition()
+        private void Update()
         {
-            World.Current.GetPositionIndex(worldObject,out var posIndex,out var totalIndex);
-            return worldObject.position.GetPosition(posIndex,totalIndex).Translate(0.5f,0.5f);
+            if (worldObject != null)
+            {
+                UpdateSprites();
+                //transform.position = worldObject.virtualPosition;
+            }
+        }
+
+        public virtual void UpdateSprites()
+        {
+
         }
     }
 }

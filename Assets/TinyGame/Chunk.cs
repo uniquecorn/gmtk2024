@@ -9,7 +9,7 @@ namespace TinyGame
     public class Chunk
     {
         private int[] _gridIndex;
-        public const int ChunkSize = 64;
+        public const int ChunkSize = 32;
         public const int ChunkMag = ChunkSize * ChunkSize;
         public const int NodeSize = ChunkSize+1;
         public CastleGrid origin;
@@ -84,11 +84,8 @@ namespace TinyGame
                     if (!IsTerrain(x,y)) continue;
                     if (noise.HeightMap[x, y] > 0.6f)
                     {
-                        var t =  1 + Mathf.CeilToInt(4*((noise.HeightMap[x, y] - 0.6f) / 0.4f));
-                        for (var i = 0; i < t; i++)
-                        {
-                            World.Current.MakeWorldObject<TreeObject>(WorldPosition(x, y));
-                        }
+                        var tree = World.Current.MakeWorldObject<TreeObject>(WorldPosition(x, y));
+                        tree.numTrees = Mathf.CeilToInt(5*((noise.HeightMap[x, y] - 0.6f) / 0.4f));
                     }
                 }
             }
@@ -123,21 +120,25 @@ namespace TinyGame
             {
                 _gridIndex[i] = IsTerrain(i) ? 0 : 99999;
             }
-            foreach (var e in World.Current.entities)
-            {
-                if(!e.InChunk(this,out var localPosition)) continue;
-                var gIndex = localPosition.Flatten(ChunkSize);
-                _gridIndex[gIndex] += e.WalkableIndex;
-                //Debug.Log(localPosition + ","+ _gridIndex[localPosition.Flatten(ChunkSize)] +" / "+IsTerrain(gIndex));
-            }
 
-            // for (var i = 0; i < _gridIndex.Length; i++)
-            // {
-            //     if (!IsTerrain(i))
-            //     {
-            //         Debug.Log(WorldPosition(i) + ","+ _gridIndex[i]);
-            //     }
-            // }
+            if (World.Current.immovableDictionary.TryGetValue(origin,out var immovableEntities))
+            {
+                foreach (var e in immovableEntities)
+                {
+                    if(!e.InChunk(this,out var localPosition)) continue;
+                    var gIndex = localPosition.Flatten(ChunkSize);
+                    _gridIndex[gIndex] += e.WalkableIndex;
+                }
+            }
+            if (World.Current.entityDictionary.TryGetValue(origin, out var entities))
+            {
+                foreach (var e in entities)
+                {
+                    if(!e.InChunk(this,out var localPosition)) continue;
+                    var gIndex = localPosition.Flatten(ChunkSize);
+                    _gridIndex[gIndex] += e.WalkableIndex;
+                }
+            }
         }
 
         public int MakeLocalPath(CastleGrid start, CastleGrid end, int objectValue, out CastleGrid[] path)

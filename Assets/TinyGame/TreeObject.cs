@@ -6,12 +6,104 @@ namespace TinyGame
 {
     public class TreeObject : WorldObject<TreeSpawn,TreeObject>
     {
+        public override bool Immovable => true;
+        public override int WalkableIndex => numTrees;
+        public int numTrees;
+        public SubTree[] subTrees;
+        public class SubTree
+        {
+            public bool baby;
+            public float time;
+        }
+
+        public override void Init(CastleGrid position)
+        {
+            base.Init(position);
+            subTrees = new SubTree[5];
+            for (var i = 0; i < subTrees.Length; i++)
+            {
+                subTrees[i] = new SubTree();
+            }
+        }
+        public override Vector3 GetVectorPosition() => position.AsVector().Translate(0.5f, 0.5f);
+        public override AIState DefaultState => new TreeAI();
         public override int MaxHealth { get; }
-        public override int WalkableIndex => 1;
-        public override void Spawn(out TreeSpawn spawn)
+
+        protected override void SpawnStrong(out TreeSpawn spawn)
         {
             spawn = Object.Instantiate(WorldSettings.Instance.treePrefab);
-            spawn.spriteRenderer.sprite = WorldSettings.Instance.trees.RandomValue();
+        }
+
+        public void GrowNewTree()
+        {
+            if (numTrees < subTrees.Length)
+            {
+                subTrees[numTrees].baby = true;
+                subTrees[numTrees].time = 0f;
+                numTrees++;
+            }
+        }
+        public class TreeAI : AIState<TreeObject>
+        {
+            public float growInterval;
+            public override float SlowTriggerInterval => growInterval;
+            public TreeAI()
+            {
+               RollGrowInterval();
+            }
+            public override AIState RunState(TreeObject worldObject, float deltaTime, out bool addedEntity)
+            {
+                addedEntity = false;
+                for (var i = 0; i < worldObject.numTrees; i++)
+                {
+                    worldObject.subTrees[i].time += deltaTime;
+                }
+                return this;
+            }
+            protected override void SlowTrigger(TreeObject worldObject, out bool addedEntity)
+            {
+                addedEntity = false;
+                if (Random.value > 0.95f)
+                {
+                    var num = World.Current.GetImmovableEntitiesAt<TreeObject>(worldObject.position, out _);
+                    var growOutside = num >= 5 || Random.value < (0.2f * num);
+                    if (growOutside)
+                    {
+                        foreach (var n in Tools.RandomNumEnumerable(
+                                     CastleGrid.GetGridsAroundNonAlloc(worldObject.position, out var grids)))
+                        {
+                            if(!World.Current.IsTerrain(grids[n]))continue;
+                            if (World.Current.GetFirstImmovableEntityAt<TreeObject>(grids[n], out var treeObject))
+                            {
+                                if (treeObject.numTrees < 5)
+                                {
+                                    treeObject.GrowNewTree();
+                                    break;
+                                }
+                                if(Random.value < 0.5f) break;
+                            }
+                            else
+                            {
+                                var newTree = World.Current.MakeWorldObject<TreeObject>(grids[n]);
+                                newTree.numTrees = 0;
+                                newTree.GrowNewTree();
+                                addedEntity = true;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        worldObject.GrowNewTree();
+                    }
+                }
+                RollGrowInterval();
+            }
+
+            public void RollGrowInterval()
+            {
+                growInterval = Random.Range(15f,30f);
+            }
         }
     }
 }

@@ -36,6 +36,14 @@ namespace TinyGame
         private void Update()
         {
             var _focusedChunk = Chunk.ChunkPosition(transform.position);
+            World.Current.UpdateEntities(_focusedChunk);
+            for (var i = 0; i < World.ChunksDrawn; i++)
+            {
+                if(!World.Current.renderedChunks[i].rendered)continue;
+                if(World.Current.renderedChunks[i].origin == _focusedChunk) continue;
+                if (Time.frameCount % World.ChunksDrawn != i) continue;
+                World.Current.UpdateEntities(World.Current.renderedChunks[i].origin);
+            }
             if (focusedChunk != _focusedChunk)
             {
                 World.Current.Render(_focusedChunk);
