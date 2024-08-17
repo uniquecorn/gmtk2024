@@ -24,3 +24,6 @@ MonoBehaviour:
     Scale: 30
     Seed: 0
   treePrefab: {fileID: 6842239536925796777, guid: ee0f7b7e0a4cf44dbb908a906bc96108, type: 3}
+  trees:
+  - {fileID: -2045703934, guid: f63bf4816420e784db71fedd95e3879f, type: 3}
+  - {fileID: 709037255, guid: f63bf4816420e784db71fedd95e3879f, type: 3}
