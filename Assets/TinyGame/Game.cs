@@ -12,12 +12,25 @@ namespace TinyGame
         public CastleGrid focusedChunk;
         [ShowInInspector]
         public CastleGrid cameraGrid => new CastleGrid(transform.position);
+        [ShowInInspector]
+        public CastleGrid chunkGrid => Chunk.ChunkPosition(transform.position);
+        [ShowInInspector]
+        public int xPos => Mathf.FloorToInt(transform.position.x / Chunk.ChunkSize);
+        [ShowInInspector]
+        public int yPos => Mathf.FloorToInt(transform.position.y / Chunk.ChunkSize);
         void Start()
         {
             World.Current = new World(seed);
             camera.transform.Move2D(Chunk.ChunkSize/2);
             focusedChunk = Chunk.ChunkPosition(transform.position);
-            World.Current.Render(focusedChunk);
+            var chunk = World.Current.GetChunk(focusedChunk);
+            foreach (var i in Tools.RandomNumEnumerable(Chunk.ChunkMag))
+            {
+                if (!chunk.IsTerrain(i)) continue;
+                World.Current.MakeWorldObject<PersonObject>(chunk.WorldPosition(i));
+                break;
+            }
+            World.Current.Render(chunk);
         }
 
         private void Update()

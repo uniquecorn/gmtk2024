@@ -10,6 +10,7 @@ namespace TinyGame
         public Color waterColor, landColor;
         public NoiseSettings noiseSettings;
         public TreeSpawn treePrefab;
+        public PersonSpawn personPrefab;
         public Sprite[] trees;
     }
 }

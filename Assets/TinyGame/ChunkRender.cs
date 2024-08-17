@@ -15,11 +15,9 @@ namespace TinyGame
         private Mesh mesh;
         private List<Vector3> vertices;
         private List<int> triangles;
-        public List<WorldSpawn> spawn;
         public ChunkRender()
         {
             rendered = false;
-            spawn = new List<WorldSpawn>(Chunk.ChunkSize);
             chunkTransform = new GameObject().transform;
             meshFilter = chunkTransform.gameObject.AddComponent<MeshFilter>();
             meshRenderer = chunkTransform.gameObject.AddComponent<MeshRenderer>();
@@ -101,14 +99,7 @@ namespace TinyGame
             }
             mesh.vertices = vertices.ToArray();
             mesh.triangles = triangles.ToArray();
-            foreach (var o in chunk.immovableObjects)
-            {
-                o.Spawn(out var s);
-                spawn.Add(s);
-                s.transform.SetParent(chunkTransform);
-            }
             rendered = true;
-
         }
 
         private void AddTriangle (Vector3 a, Vector3 b, Vector3 c)
