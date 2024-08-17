@@ -6,7 +6,9 @@ namespace TinyGame
     [GlobalConfig("Assets/Resources"),CreateAssetMenu]
     public class WorldSettings : GlobalConfig<WorldSettings>
     {
-        public Sprite terrain;
+        public Material terrainMaterial;
+        public Color waterColor, landColor;
         public NoiseSettings noiseSettings;
+        public TreeSpawn treePrefab;
     }
 }

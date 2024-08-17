@@ -6,11 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="a4b7e29f-696f-4ceb-ac92-15497e14d182" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TinyGame.asmdef" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TinyGame.asmdef.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/World Settings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/World Settings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/World.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldSettings.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +24,8 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/TinyGame/Entity.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d44b17e136d09081da1e8fd0e8c83fde60e11818b9f2442d7ed8cb733fae895e/System.Collections.Generic.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -95,7 +99,8 @@
       <updated>1723827937222</updated>
       <workItem from="1723827938430" duration="5000" />
       <workItem from="1723827948321" duration="2313000" />
-      <workItem from="1723830737401" duration="1748000" />
+      <workItem from="1723830737401" duration="11651000" />
+      <workItem from="1723842467924" duration="13089000" />
     </task>
     <servers />
   </component>
