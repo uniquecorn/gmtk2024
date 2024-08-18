@@ -7,7 +7,9 @@
     <list default="true" id="a4b7e29f-696f-4ceb-ac92-15497e14d182" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/AIState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/AIState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Castle/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Castle/Tools.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Tools.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" afterDir="false" />
@@ -18,7 +20,6 @@
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/World.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldSpawn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldSpawn.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Tree.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Tree.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,9 +49,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Attach to Unity Editor.Attach to Unity Editor.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "settings.editor.selected.configurable": "reference.settings.project.statistic.project.settings"
+    "settings.editor.selected.configurable": "preferences.build.unityPlugin"
   },
   "keyToStringList": {
     "rider.external.source.directories": [
@@ -87,10 +89,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="1533">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" />
+      <option name="pid" value="1533" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -111,6 +113,7 @@
       <workItem from="1723830737401" duration="11651000" />
       <workItem from="1723842467924" duration="13089000" />
       <workItem from="1723856153191" duration="38082000" />
+      <workItem from="1723930170072" duration="33267000" />
     </task>
     <servers />
   </component>

@@ -99,26 +99,13 @@ namespace TinyGame
             }
             mesh.vertices = vertices.ToArray();
             mesh.triangles = triangles.ToArray();
+            foreach (var e in chunk.immovableObjects)
+            {
+                if (e.Spawned) continue;
+                e.Spawn(out var s);
+                s.transform.SetParent(chunkTransform);
+            }
             rendered = true;
-            if (World.Current.immovableDictionary.TryGetValue(origin, out var immovableEntities))
-            {
-                foreach (var e in immovableEntities)
-                {
-                    if (e.Spawned) continue;
-                    e.Spawn(out var s);
-                    s.transform.SetParent(chunkTransform);
-                }
-            }
-
-            if (World.Current.entityDictionary.TryGetValue(origin, out var entities))
-            {
-                foreach (var e in entities)
-                {
-                    if (e.Spawned) continue;
-                    e.Spawn(out var s);
-                    s.transform.SetParent(chunkTransform);
-                }
-            }
         }
 
         private void AddTriangle (Vector3 a, Vector3 b, Vector3 c)

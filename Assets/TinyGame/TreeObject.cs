@@ -18,12 +18,12 @@ namespace TinyGame
 
         public override void Init(CastleGrid position)
         {
-            base.Init(position);
             subTrees = new SubTree[5];
             for (var i = 0; i < subTrees.Length; i++)
             {
                 subTrees[i] = new SubTree();
             }
+            base.Init(position);
         }
         public override Vector3 GetVectorPosition() => position.AsVector().Translate(0.5f, 0.5f);
         public override AIState DefaultState => new TreeAI();
@@ -63,24 +63,24 @@ namespace TinyGame
             protected override void SlowTrigger(TreeObject worldObject, out bool addedEntity)
             {
                 addedEntity = false;
-                if (Random.value > 0.95f)
+
+                if (World.Current.rng.Next(10) == 0)
                 {
-                    var num = World.Current.GetImmovableEntitiesAt<TreeObject>(worldObject.position, out _);
-                    var growOutside = num >= 5 || Random.value < (0.2f * num);
+                    var growOutside = worldObject.numTrees >= 5 || Random.value < (0.2f * worldObject.numTrees);
                     if (growOutside)
                     {
                         foreach (var n in Tools.RandomNumEnumerable(
-                                     CastleGrid.GetGridsAroundNonAlloc(worldObject.position, out var grids)))
+                                     CastleGrid.GetGridsAroundNonAlloc(worldObject.position, out var grids),World.Current.rng))
                         {
                             if(!World.Current.IsTerrain(grids[n]))continue;
-                            if (World.Current.GetFirstImmovableEntityAt<TreeObject>(grids[n], out var treeObject))
+                            if (World.Current.GetFirstImmovableEntityAt<TreeObject>(grids[n],out var treeObject))
                             {
                                 if (treeObject.numTrees < 5)
                                 {
                                     treeObject.GrowNewTree();
                                     break;
                                 }
-                                if(Random.value < 0.5f) break;
+                                if(World.Current.rng.Next(2) == 0) break;
                             }
                             else
                             {
@@ -102,7 +102,7 @@ namespace TinyGame
 
             public void RollGrowInterval()
             {
-                growInterval = Random.Range(15f,30f);
+                growInterval = 5f + (5f * (float)World.Current.rng.NextDouble());
             }
         }
     }

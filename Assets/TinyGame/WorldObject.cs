@@ -38,13 +38,13 @@ namespace TinyGame
             var chunkPosition = Chunk.ChunkPosition(position, out localPosition);
             return chunkPosition == chunk.origin;
         }
-
         public Chunk GetChunk() => World.Current.GetChunk(ChunkPosition);
         public CastleGrid ChunkPosition => Chunk.ChunkPosition(position);
         public abstract void Spawn(out WorldSpawn spawn);
 
         public bool Move(Vector3 position,float deltaTime,out float distanceToTarget)
         {
+            //Debug.Log("moving to "+position +" from " + virtualPosition);
             Vector2 dist = (position - virtualPosition);
             var distanceRemaining = dist.magnitude;
             if (distanceRemaining < 0.01f)
@@ -54,8 +54,28 @@ namespace TinyGame
             }
             var direction = dist/distanceRemaining;
             var distanceToMove = Mathf.Min(deltaTime * Speed, distanceRemaining);
-            virtualPosition.Translate(direction * distanceToMove);
-            this.position = CastleGrid.FromVector(virtualPosition);
+            virtualPosition = virtualPosition.Translate(direction * distanceToMove);
+            //Debug.Log(virtualPosition);
+            var newPos = CastleGrid.FromVector(virtualPosition);
+            if (this.position != newPos)
+            {
+                this.position = newPos;
+                if (Spawned)
+                {
+                    if (!World.Current.IsRendered(ChunkPosition))
+                    {
+                        Despawn();
+                    }
+                }
+                else
+                {
+                    if (World.Current.IsRendered(ChunkPosition))
+                    {
+                        Spawn(out _);
+                    }
+                }
+            }
+
             distanceToTarget = distanceRemaining - distanceToMove;
             return false;
         }

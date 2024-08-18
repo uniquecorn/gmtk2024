@@ -8,6 +8,7 @@ namespace TinyGame
     public class PersonObject : WorldObject<PersonSpawn,PersonObject>
     {
         public override AIState DefaultState => new PersonAI();
+        public override float Speed => 30;
         public override int MaxHealth => 4;
         public override int WalkableIndex => 1;
         protected override void SpawnStrong(out PersonSpawn spawn)
@@ -19,10 +20,17 @@ namespace TinyGame
         {
             public CastleGrid target;
             public List<CastleGrid> path;
+            public int pathPosition;
+            public bool chosePath;
             public override AIState RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
             {
                 addedEntity = false;
-                if (worldObject.position.Equals(target))
+                if (!chosePath)
+                {
+                    ChooseNewTarget(worldObject);
+                }
+
+                if (!chosePath || pathPosition >= path.Count)
                 {
                     if (worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _))
                     {
@@ -31,32 +39,73 @@ namespace TinyGame
                 }
                 else
                 {
-                    if (World.Current.TryPath(worldObject.position, target, worldObject.WalkableIndex,
-                            out path))
+                    if (path.IsSafe())
                     {
-                        worldObject.Move(path[1].GetPosition(),deltaTime,out _);
-                    }
-                    else
-                    {
-                        ChooseNewTarget(worldObject);
+                        var targetPos = path[pathPosition].GetPosition().Translate(0.5f, 0.5f);
+                        if (worldObject.Move(targetPos, deltaTime, out _))
+                        {
+                            pathPosition++;
+                        }
                     }
                 }
-                return null;
+                // return this;
+                // if (worldObject.position.Equals(target))
+                // {
+                //     if (worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _))
+                //     {
+                //         Debug.Log("on target");
+                //         ChooseNewTarget(worldObject);
+                //     }
+                // }
+                // else
+                // {
+                //     if (World.Current.TryPath(worldObject.position, target, worldObject.WalkableIndex,
+                //             out path))
+                //     {
+                //         worldObject.Move(path[1].GetPosition().Translate(0.5f,0.5f),deltaTime,out _);
+                //     }
+                //     else
+                //     {
+                //         ChooseNewTarget(worldObject);
+                //     }
+                // }
+                return this;
             }
 
             public void ChooseNewTarget(PersonObject worldObject)
             {
-                var chunk = worldObject.GetChunk();
-                foreach (var i in Tools.RandomNumEnumerable(Chunk.ChunkMag))
+                chosePath = false;
+                //Debug.Log("choose new target");
+                var tries = 0;
+                foreach (var i in Tools.RandomNumEnumerable(100,World.Current.rng))
                 {
-                    if (!chunk.IsTerrain(i)) continue;
-                    var end = chunk.WorldPosition(i);
+                    var end = worldObject.position.Shift(CastleGrid.FromFlat(i,10).Subtract(5,5));
                     if(end == worldObject.position)continue;
-                    if(World.Current.TryPath(worldObject.position, chunk.WorldPosition(i), worldObject.WalkableIndex,
-                           out path))
+                    var pathLength = World.Current.TryPath(worldObject.position, end, worldObject.WalkableIndex, out var pathAlloc);
+
+                    if(pathLength >= 0)
                     {
+                        if (path == null)
+                        {
+                            path = new List<CastleGrid>(pathAlloc.Length);
+                        }
+                        else
+                        {
+                            path.Clear();
+                            for (var j = 0; j <= pathLength; j++)
+                            {
+                                path.Add(pathAlloc[j]);
+                            }
+                        }
                         target = end;
+                        pathPosition = 0;
+                        chosePath = true;
                         break;
+                    }
+                    else
+                    {
+                        tries++;
+                        if(tries > 3) break;
                     }
                 }
             }
