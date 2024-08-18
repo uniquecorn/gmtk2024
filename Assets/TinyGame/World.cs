@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace TinyGame
@@ -17,6 +18,9 @@ namespace TinyGame
         public List<WorldObject> entities;
         public List<WorldSpawn> spawn;
         public WorldObject[] objectAlloc;
+        public int chunksMade;
+        [ShowInInspector]
+        public int entityCount => entities.Count;
         public const int DrawDistance = 1;
         public const int DrawAxis = ((DrawDistance * 2) + 1);
         public const int ChunksDrawn = DrawAxis * DrawAxis;
@@ -221,7 +225,7 @@ namespace TinyGame
                     c.CalculateGridIndex();
                     GetChunk(line[i+1]).CalculateGridIndex();
                     var d = line[i].Dist(line[i + 1], false);
-                    if (d.Distance(CastleGrid.Zero()) > 1)
+                    if (d.x != 0 && d.y != 0)
                     {
                         var o = d switch
                         {
@@ -355,7 +359,7 @@ namespace TinyGame
                 {
                     chunks[key].UpdateImmovableObjects();
                 }
-                else
+                else if (distance <= 5)
                 {
                     if ((Time.frameCount % (distance * 5)) == 0)
                     {
@@ -366,6 +370,8 @@ namespace TinyGame
             c = entities.Count;
             for (var i = 0; i < c; i++)
             {
+                var distance = entities[i].ChunkPosition.Distance(focusedChunk);
+                if(distance > 5) continue;
                 entities[i].Tick(out var addedEntity);
                 if (addedEntity) c = entities.Count;
             }

@@ -17,13 +17,8 @@ namespace TinyGame
         public Vector3 virtualPosition;
         public Vector3 Origin => position.AsVector() + Vector2.one / 2;
         public bool Spawned => spawned;
-        public bool IsSpawned(out WorldSpawn spawn)
-        {
-            spawn = spawnedObject;
-            return spawned;
-        }
+        public abstract bool IsSpawned(out WorldSpawn spawn);
         protected bool spawned;
-        protected WorldSpawn spawnedObject;
         public virtual float Speed => 1;
         public virtual void Init(CastleGrid position)
         {
@@ -41,7 +36,6 @@ namespace TinyGame
         public Chunk GetChunk() => World.Current.GetChunk(ChunkPosition);
         public CastleGrid ChunkPosition => Chunk.ChunkPosition(position);
         public abstract void Spawn(out WorldSpawn spawn);
-
         public bool Move(Vector3 position,float deltaTime,out float distanceToTarget)
         {
             //Debug.Log("moving to "+position +" from " + virtualPosition);
@@ -86,16 +80,28 @@ namespace TinyGame
             return position.GetPosition(posIndex,totalIndex).Translate(0.5f,0.5f);
         }
 
-        public void Despawn()
-        {
-            spawned = false;
-            Object.Destroy(spawnedObject.gameObject);
-            spawnedObject = null;
-        }
+        public abstract void Despawn();
     }
 
     public abstract class WorldObject<T,T2> : WorldObject where T : WorldSpawn<T2> where T2 : WorldObject<T,T2>
     {
+        public T spawnedObject;
+        public override bool IsSpawned(out WorldSpawn spawn)
+        {
+            if (IsSpawned(out T s))
+            {
+                spawn = s;
+                return true;
+            }
+            spawn = default;
+            return false;
+        }
+
+        public bool IsSpawned(out T spawn)
+        {
+            spawn = spawnedObject;
+            return spawned;
+        }
         public override void Spawn(out WorldSpawn spawn)
         {
             if (spawned)
@@ -109,5 +115,11 @@ namespace TinyGame
             spawn = spawnedObject = s;
         }
         protected abstract void SpawnStrong(out T spawn);
+        public override void Despawn()
+        {
+            spawned = false;
+            Object.Destroy(spawnedObject.gameObject);
+            spawnedObject = null;
+        }
     }
 }

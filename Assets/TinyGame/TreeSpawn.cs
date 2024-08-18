@@ -13,40 +13,16 @@ namespace TinyGame
             {
                 spriteRenderers[i].sprite = WorldSettings.Instance.trees.RandomValue();
                 spriteRenderers[i].enabled = i < worldObject.numTrees;
-                var p = worldObject.position.GetPosition(i, worldObject.numTrees).Translate(0.5f, 0.5f);
-                spriteRenderers[i].transform.position = p;
-                if (worldObject.subTrees[i].baby)
-                {
-                    spriteRenderers[i].transform.localScale = Vector3.one * Mathf.Min(1, worldObject.subTrees[i].time);
-                }
-                else
-                {
-                    spriteRenderers[i].transform.localScale = Vector3.one;
-                }
+                spriteRenderers[i].transform.position = worldObject.subTrees[i].position;
             }
         }
 
-        public override void UpdateSprites()
+        public void SetTreeSprites()
         {
-            base.UpdateSprites();
             for (var i = 0; i < 5; i++)
             {
                 spriteRenderers[i].enabled = i < worldObject.numTrees;
-                if (spriteRenderers[i].enabled)
-                {
-                    var p = worldObject.position.GetPosition(i, worldObject.numTrees).Translate(0.5f, 0.5f);
-                    spriteRenderers[i].transform.position = Vector3.Lerp(spriteRenderers[i].transform.position,p,Time.deltaTime);
-                    if (worldObject.subTrees[i].baby)
-                    {
-                        spriteRenderers[i].transform.localScale =
-                            Vector3.one * Mathf.Min(1, worldObject.subTrees[i].time);
-                    }
-                    else
-                    {
-                        spriteRenderers[i].transform.localScale =
-                            Vector3.one;
-                    }
-                }
+                spriteRenderers[i].transform.position = worldObject.subTrees[i].position;
             }
         }
     }

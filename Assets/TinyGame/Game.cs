@@ -7,16 +7,14 @@ namespace TinyGame
 {
     public class Game : MonoBehaviour
     {
+
+        [ShowInInspector,HideInEditorMode]
+        public int entities => World.Current?.chunksMade ?? 0;
+        [ShowInInspector,HideInEditorMode]
+        public int chunksMade => World.Current?.chunksMade ?? 0;
         public int seed;
         public new Camera camera;
         public CastleGrid focusedChunk;
-        public CastleGrid localGrid;
-        [ShowInInspector]
-        public CastleGrid chunkGrid => Chunk.ChunkPosition(focusedChunk,out localGrid);
-        [ShowInInspector]
-        public int xPos => Mathf.FloorToInt(transform.position.x / Chunk.ChunkSize);
-        [ShowInInspector]
-        public int yPos => Mathf.FloorToInt(transform.position.y / Chunk.ChunkSize);
         void Start()
         {
             Debug.Log("start sim");

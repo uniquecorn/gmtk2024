@@ -12,18 +12,19 @@ namespace TinyGame
         public SubTree[] subTrees;
         public class SubTree
         {
+            public Vector3 position;
             public bool baby;
             public float time;
         }
 
-        public override void Init(CastleGrid position)
+        public TreeObject()
         {
+            numTrees = 0;
             subTrees = new SubTree[5];
             for (var i = 0; i < subTrees.Length; i++)
             {
                 subTrees[i] = new SubTree();
             }
-            base.Init(position);
         }
         public override Vector3 GetVectorPosition() => position.AsVector().Translate(0.5f, 0.5f);
         public override AIState DefaultState => new TreeAI();
@@ -33,7 +34,6 @@ namespace TinyGame
         {
             spawn = Object.Instantiate(WorldSettings.Instance.treePrefab);
         }
-
         public void GrowNewTree()
         {
             if (numTrees < subTrees.Length)
@@ -41,6 +41,23 @@ namespace TinyGame
                 subTrees[numTrees].baby = true;
                 subTrees[numTrees].time = 0f;
                 numTrees++;
+                position.GetPositions(numTrees, out var positions);
+                for (var i = 0; i < numTrees; i++)
+                {
+                    subTrees[numTrees].position = positions[i];
+                }
+                if (IsSpawned(out var spawn)) spawn.SetTreeSprites();
+            }
+        }
+
+        public void SetTreeCount(int treeCount)
+        {
+            numTrees = treeCount;
+            position.GetPositions(numTrees, out var positions);
+            for (var i = 0; i < numTrees; i++)
+            {
+                subTrees[numTrees].baby = false;
+                subTrees[numTrees].position = positions[i];
             }
         }
         public class TreeAI : AIState<TreeObject>
@@ -54,9 +71,22 @@ namespace TinyGame
             public override AIState RunState(TreeObject worldObject, float deltaTime, out bool addedEntity)
             {
                 addedEntity = false;
+                var spawned = worldObject.IsSpawned(out var spawn);
                 for (var i = 0; i < worldObject.numTrees; i++)
                 {
                     worldObject.subTrees[i].time += deltaTime;
+                    if (worldObject.subTrees[i].baby)
+                    {
+                        if (worldObject.subTrees[i].time > 1)
+                        {
+                            worldObject.subTrees[i].baby = false;
+                        }
+                        if (spawned)
+                        {
+                            spawn.spriteRenderers[i].transform.localScale =
+                                Vector3.one * Mathf.Min(1, worldObject.subTrees[i].time);
+                        }
+                    }
                 }
                 return this;
             }
@@ -85,7 +115,7 @@ namespace TinyGame
                             else
                             {
                                 var newTree = World.Current.MakeWorldObject<TreeObject>(grids[n]);
-                                newTree.numTrees = 0;
+                                newTree.SetTreeCount(0);
                                 newTree.GrowNewTree();
                                 addedEntity = true;
                                 break;

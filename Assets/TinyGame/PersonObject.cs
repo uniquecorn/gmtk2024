@@ -7,21 +7,32 @@ namespace TinyGame
 {
     public class PersonObject : WorldObject<PersonSpawn,PersonObject>
     {
+        public static int[] randomNumAlloc;
         public override AIState DefaultState => new PersonAI();
-        public override float Speed => 30;
+        public override float Speed => 10;
         public override int MaxHealth => 4;
         public override int WalkableIndex => 1;
+
+        public PersonObject()
+        {
+            if (randomNumAlloc == null)
+            {
+                randomNumAlloc = new int[100];
+                for (var i = 0; i < 100; i++)
+                {
+                    randomNumAlloc[i] = i;
+                }
+            }
+        }
         protected override void SpawnStrong(out PersonSpawn spawn)
         {
             spawn = Object.Instantiate(WorldSettings.Instance.personPrefab);
         }
-
         public class PersonAI : AIState<PersonObject>
         {
-            public CastleGrid target;
-            public List<CastleGrid> path;
-            public int pathPosition;
+            public CastleGrid target, next;
             public bool chosePath;
+
             public override AIState RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
             {
                 addedEntity = false;
@@ -30,7 +41,7 @@ namespace TinyGame
                     ChooseNewTarget(worldObject);
                 }
 
-                if (!chosePath || pathPosition >= path.Count)
+                if (!chosePath || next == target)
                 {
                     if (worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _))
                     {
@@ -39,13 +50,12 @@ namespace TinyGame
                 }
                 else
                 {
-                    if (path.IsSafe())
+                    var targetPos = next.GetPosition().Translate(0.5f, 0.5f);
+                    if (worldObject.Move(targetPos, deltaTime, out _))
                     {
-                        var targetPos = path[pathPosition].GetPosition().Translate(0.5f, 0.5f);
-                        if (worldObject.Move(targetPos, deltaTime, out _))
-                        {
-                            pathPosition++;
-                        }
+                        var p = World.Current.TryPath(next,target,worldObject.WalkableIndex, out var pathAlloc);
+                        if (p > 0) next = pathAlloc[1];
+                        else chosePath = false;
                     }
                 }
                 // return this;
@@ -77,28 +87,16 @@ namespace TinyGame
                 chosePath = false;
                 //Debug.Log("choose new target");
                 var tries = 0;
-                foreach (var i in Tools.RandomNumEnumerable(100,World.Current.rng))
+                foreach (var i in randomNumAlloc.Shuffle(World.Current.rng))
                 {
                     var end = worldObject.position.Shift(CastleGrid.FromFlat(i,10).Subtract(5,5));
                     if(end == worldObject.position)continue;
                     var pathLength = World.Current.TryPath(worldObject.position, end, worldObject.WalkableIndex, out var pathAlloc);
-
-                    if(pathLength >= 0)
+                    if(pathLength > 0)
                     {
-                        if (path == null)
-                        {
-                            path = new List<CastleGrid>(pathAlloc.Length);
-                        }
-                        else
-                        {
-                            path.Clear();
-                            for (var j = 0; j <= pathLength; j++)
-                            {
-                                path.Add(pathAlloc[j]);
-                            }
-                        }
+                        next = pathAlloc[1];
                         target = end;
-                        pathPosition = 0;
+                        target = end;
                         chosePath = true;
                         break;
                     }

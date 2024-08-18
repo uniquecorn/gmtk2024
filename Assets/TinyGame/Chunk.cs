@@ -21,6 +21,7 @@ namespace TinyGame
         public List<WorldObject> immovableObjects;
         public static void Make(CastleGrid origin, World world, out Chunk chunk)
         {
+            World.Current.chunksMade++;
             chunk = new Chunk(origin);
             world.chunks.Add(origin,chunk);
             chunk.MakeObjects();
@@ -74,13 +75,12 @@ namespace TinyGame
         public void MakeObjects()
         {
             MakeTrees();
-
         }
 
         public void MakeTrees()
         {
             //if(origin.x != 0 || origin.y != 0) return;
-            var spawnedPerson = World.Current.rng.Next(15) == 0;
+            //var spawnedPerson = World.Current.rng.Next(15) == 0;
             var noise = World.Current.secondary.GenerateNoiseMap(NodeSize, NodeSize,
                 (origin * ChunkSize).AsVector().NegY());
             for (var x = 0; x < ChunkSize; x++)
@@ -91,14 +91,13 @@ namespace TinyGame
                     if (noise.HeightMap[x, y] > 0.6f)
                     {
                         var tree = World.Current.MakeWorldObject<TreeObject>(WorldPosition(x, y));
-                        tree.numTrees = Mathf.CeilToInt(5*((noise.HeightMap[x, y] - 0.6f) / 0.4f));
+                        tree.SetTreeCount(Mathf.CeilToInt(5*((noise.HeightMap[x, y] - 0.6f) / 0.4f)));
                     }
-
-                    if (!spawnedPerson)
-                    {
-                        World.Current.MakeWorldObject<PersonObject>(WorldPosition(x, y));
-                        spawnedPerson = true;
-                    }
+                    // if (!spawnedPerson)
+                    // {
+                    //     World.Current.MakeWorldObject<PersonObject>(WorldPosition(x, y));
+                    //     spawnedPerson = true;
+                    // }
                 }
             }
         }
