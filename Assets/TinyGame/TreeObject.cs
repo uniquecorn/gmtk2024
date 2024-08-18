@@ -44,7 +44,7 @@ namespace TinyGame
                 position.GetPositions(numTrees, out var positions);
                 for (var i = 0; i < numTrees; i++)
                 {
-                    subTrees[numTrees].position = positions[i];
+                    subTrees[i].position = positions[i];
                 }
                 if (IsSpawned(out var spawn)) spawn.SetTreeSprites();
             }
