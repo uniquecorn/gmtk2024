@@ -187,7 +187,7 @@ namespace TinyGame
                 pathAlloc[0] = start;
                 return 0;
             }
-            var totalLength = 0;
+            var totalLength = -1;
             var c1 = Chunk.ChunkPosition(start,out var l1);
             var c2 = Chunk.ChunkPosition(end,out var l2);
             if (c1 == c2)
@@ -205,9 +205,9 @@ namespace TinyGame
                 }
                 for (var i = pathLength; i >= 0; i--)
                 {
-                    pathAlloc[totalLength] = chunk.WorldPosition(localPath[i]);
                     totalLength++;
                     if (totalLength >= pathAlloc.Length) return -1;
+                    pathAlloc[totalLength] = chunk.WorldPosition(localPath[i]);
                 }
                 return totalLength;
             }
@@ -250,9 +250,9 @@ namespace TinyGame
                             }
                             for (var k = pathLength; k >= 0; k--)
                             {
-                                pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                 totalLength++;
                                 if (totalLength >= pathAlloc.Length) return -1;
+                                pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                             }
                             l1 = c.GetRelativeChunkPosition(o.Shift(d), out _);
                         }
@@ -280,9 +280,9 @@ namespace TinyGame
                                 if(pathLength < 0) continue;
                                 for (var k = pathLength; k >= 0; k--)
                                 {
-                                    pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                     totalLength++;
                                     if (totalLength >= pathAlloc.Length) return -1;
+                                    pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                 }
                                 l1 = c.GetRelativeChunkPosition(o.Shift(d), out _);
                                 break;
@@ -298,9 +298,9 @@ namespace TinyGame
                                     {
                                         for (var k = pathLength; k >= 0; k--)
                                         {
-                                            pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                             totalLength++;
                                             if (totalLength >= pathAlloc.Length) return -1;
+                                            pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                         }
                                         l1 = c.GetRelativeChunkPosition(dO.Shift(d), out _);
                                         break;
@@ -315,9 +315,9 @@ namespace TinyGame
                                     if(pathLength < 0) continue;
                                     for (var k = pathLength; k >= 0; k--)
                                     {
-                                        pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                         totalLength++;
                                         if (totalLength >= pathAlloc.Length) return -1;
+                                        pathAlloc[totalLength] = c.WorldPosition(localPath[k]);
                                     }
                                     l1 = c.GetRelativeChunkPosition(dO.Shift(d), out _);
                                     break;
@@ -334,9 +334,9 @@ namespace TinyGame
                 {
                     for (var k = pathLength2; k >= 0; k--)
                     {
-                        pathAlloc[totalLength] = chunk.WorldPosition(localPath2[k]);
                         totalLength++;
                         if (totalLength >= pathAlloc.Length) return -1;
+                        pathAlloc[totalLength] = chunk.WorldPosition(localPath2[k]);
                     }
                     return totalLength;
                 }
