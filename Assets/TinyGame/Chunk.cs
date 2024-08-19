@@ -279,6 +279,7 @@ namespace TinyGame
                 var num = CastleGrid.GetGridsAroundNonAlloc(searchAlloc[i], out var gridsAround);
                 for (var j = 0; j < num; j++)
                 {
+                    if(gridsAround[j].Equals(start))continue;
                     if (gridsAround[j].x < 0 || gridsAround[j].y < 0) continue;
                     if(gridsAround[j].x >= ChunkSize || gridsAround[j].y >= ChunkSize)continue;
                     var nIndex = indexAlloc[gridsAround[j].Flatten(ChunkSize)];

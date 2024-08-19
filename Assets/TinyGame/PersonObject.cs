@@ -10,11 +10,19 @@ namespace TinyGame
         public ToolObject lHand;
         public static int[] randomNumAlloc;
         public override Classification classification => Classification.PlayerControl;
-        public override MainState<PersonObject> DefaultState => new PersonAI();
-        public override float Speed => 2;
+        public override AIState<PersonObject> DefaultState => new PersonAI();
+        public override float Speed => 5;
         public override int MaxHealth => 4;
         public override int WalkableIndex => 1;
 
+        public void Command(CastleGrid grid)
+        {
+            if (CurrentState.GetState(out PersonAI.Move move))
+            {
+                move.move.TrySetTarget(this, grid);
+                CurrentState.SwitchState(move);
+            }
+        }
         public PersonObject()
         {
             if (randomNumAlloc == null)
@@ -30,82 +38,82 @@ namespace TinyGame
         {
             spawn = Object.Instantiate(Game.instance.settings.personPrefab);
         }
-        public class PersonAI : MainState<PersonObject>
+        public class PersonAI : AIState<PersonObject>
         {
+            public float nextActionTime;
+            public const float sightDistance = 2.5f;
             public PersonAI()
             {
                 states = new SubState[]
                 {
                     new Wander(this),
+                    new Chase(this),
+                    new Move(this)
                 };
             }
-            public override void RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
+            public override void RunState(PersonObject worldObject, out bool addedEntity)
             {
-                base.RunState(worldObject, deltaTime, out addedEntity);
+                base.RunState(worldObject, out addedEntity);
                 if (currentState < 0)
                 {
-                    if (stateTimer > 4)
+                    if (stateTimer > nextActionTime)
                     {
                         SwitchState(0,worldObject);
                     }
                 }
             }
+
+            public override void ResetState()
+            {
+                base.ResetState();
+                nextActionTime = 2 + ((float) World.Current.rng.NextDouble()) * 2;
+            }
+
+            protected override void SlowTrigger(PersonObject worldObject, out bool addedEntity)
+            {
+                base.SlowTrigger(worldObject, out addedEntity);
+                // var num = World.Current.GetObjectsInDistance(worldObject.position, out var o, sightDistance);
+                // for (var i = 0; i < num; i++)
+                // {
+                //     if (o[i] is PersonObject tree && tree != worldObject)
+                //     {
+                //         if (GetState(out Chase chase))
+                //         {
+                //             chase.TryChase(worldObject,tree);
+                //             break;
+                //         }
+                //     }
+                // }
+            }
             public class Wander : SubState
             {
-                public bool chosePath;
-                public CastleGrid target, next;
-                public Wander(MainState<PersonObject> mainState) : base(mainState) { }
+                public MoveToGrid move;
+                public Wander(AIState<PersonObject> mainState) : base(mainState) => move = new MoveToGrid();
+
                 public override void StartState(PersonObject worldObject)
                 {
                     ChooseNewTarget(worldObject);
                     base.StartState(worldObject);
                 }
 
-                public override void RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
+                public override bool Run(PersonObject worldObject, float deltaTime, out bool addedEntity)
                 {
                     addedEntity = false;
-                    if (!chosePath)
+                    if (move.chosePath)
                     {
-                        chosePath = ChooseNewTarget(worldObject);
-                        if (!chosePath)
-                        {
-                            mainState.ResetState();
-                            return;
-                        }
+                        return move.Run(worldObject, deltaTime,out addedEntity);
                     }
-                    var targetPos = next.GetPosition().Translate(0.5f, 0.5f);
-                    if (worldObject.Move(targetPos, deltaTime, out _))
-                    {
-                        if (target.Equals(next))
-                        {
-                            mainState.ResetState();
-                        }
-                        else
-                        {
-                            var p = World.Current.TryPath(next,target,worldObject.WalkableIndex, out var pathAlloc);
-                            if (p > 0) next = pathAlloc[1];
-                            else
-                            {
-                                mainState.ResetState();
-                            }
-                        }
-                    }
+                    return false;
                 }
 
                 public bool ChooseNewTarget(PersonObject worldObject)
                 {
-                    //Debug.Log("choose new target");
                     var tries = 0;
                     foreach (var i in randomNumAlloc.Shuffle(World.Current.rng))
                     {
                         var end = worldObject.position.Shift(CastleGrid.FromFlat(i,10).Subtract(5,5));
-                        if(end == worldObject.position)continue;
-                        var pathLength = World.Current.TryPath(worldObject.position, end, worldObject.WalkableIndex, out var pathAlloc);
-                        if(pathLength > 0)
+                        if (move.TrySetTarget(worldObject, end))
                         {
-                            next = pathAlloc[1];
-                            target = end;
-                            target = end;
                             return true;
                         }
                         else
@@ -115,6 +123,57 @@ namespace TinyGame
                         }
                     }
                     return false;
+                }
+            }
+
+            public class Chase : SubState
+            {
+                public WorldObject target;
+                public MoveToTarget move;
+                public Chase(AIState<PersonObject> mainState) : base(mainState) => move = new MoveToTarget();
+
+                public override bool Run(PersonObject worldObject, float deltaTime, out bool addedEntity)
+                {
+                    addedEntity = false;
+                    if (worldObject.position.Distance(target.position) <= 1)
+                    {
+
+                    }
+                    else
+                    {
+                        move.Run(worldObject, deltaTime,out _);
+                    }
+                    return true;
+                }
+
+                public void TryChase(PersonObject o,WorldObject target)
+                {
+                    this.target = target;
+                    StartState(o);
+                    mainState.SwitchState(this);
+                }
+
+                public override void StartState(PersonObject worldObject)
+                {
+                    move.TrySetTarget(worldObject, target);
+                    base.StartState(worldObject);
+
+                }
+            }
+            public class Move : SubState
+            {
+                public MoveToGrid move;
+                public Move(AIState<PersonObject> mainState) : base(mainState) => move = new MoveToGrid();
+                public override bool Run(PersonObject worldObject, float deltaTime, out bool addedEntity)
+                {
+                    addedEntity = false;
+                    move.Run(worldObject, deltaTime,out addedEntity);
+                    return true;
+                }
+
+                public void TryMove(CastleGrid grid)
+                {
+                    //StartState(mainState);
                 }
             }
         }

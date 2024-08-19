@@ -5,83 +5,155 @@ using UnityEngine;
 
 namespace TinyGame
 {
-    [System.Serializable]
-    public abstract class AIState
+    public abstract class AIState { }
+    public abstract class PrimitiveState : PrimitiveState<WorldObject> { }
+    public abstract class PrimitiveState<T> where T : WorldObject
     {
-        public float timeSinceLastRan;
-        public float stateTimer;
-        public virtual float SlowTriggerInterval => 0.25f;
-        protected int lastSlowTrigger;
-        public void Run(WorldObject worldObject, out bool addedEntity)
+        public abstract bool Run(T worldObject, float deltaTime, out bool addedEntity);
+    }
+    public abstract class MoveTo : PrimitiveState
+    {
+        public bool chosePath;
+        public CastleGrid next,softTarget;
+        public abstract CastleGrid Target { get; }
+        public override bool Run(WorldObject worldObject,float deltaTime, out bool addedEntity)
         {
             addedEntity = false;
-            var deltaTime = Time.time - timeSinceLastRan;
-            timeSinceLastRan = Time.time;
-            stateTimer += deltaTime;
-            RunState(worldObject, deltaTime, out var added);
-            addedEntity = added || addedEntity;
-
-        }
-        protected abstract void RunState(WorldObject worldObject, float deltaTime, out bool addedEntity);
-    }
-
-    public abstract class AIState<T> : AIState where T : WorldObject
-    {
-        public virtual void StartState(T worldObject)
-        {
-            stateTimer = lastSlowTrigger = 0;
-            timeSinceLastRan = Time.time;
-        }
-        protected override void RunState(WorldObject worldObject, float deltaTime, out bool addedEntity)
-        {
-            if (worldObject is T strongObject)
+            if (!chosePath)
             {
-                RunState(strongObject, deltaTime,out addedEntity);
-                var slowTrigger = Mathf.FloorToInt(stateTimer / SlowTriggerInterval);
-                if (slowTrigger != lastSlowTrigger)
+                chosePath = FindNextNode(worldObject, Target);
+                if (!chosePath) return false;
+            }
+            World.Current.GetPositionIndex(worldObject,next,out var posIndex,out var totalIndex);
+            var targetPos = next.GetPosition(posIndex,totalIndex).Translate(0.5f, 0.5f);
+            if (worldObject.Move(targetPos, deltaTime, out _))
+            {
+                if (next.Equals(Target)) return false;
+                if (softTarget.Equals(next))
                 {
-                    lastSlowTrigger = slowTrigger;
-                    SlowTrigger(strongObject, out var added);
-                    addedEntity = added || addedEntity;
+                    if (World.Current[Target] + worldObject.WalkableIndex <= 5)
+                    {
+                        chosePath = FindNextNode(worldObject, Target);
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-            }
-            addedEntity = false;
-        }
-
-        public abstract void RunState(T worldObject, float deltaTime, out bool addedEntity);
-        protected virtual void SlowTrigger(T worldObject, out bool addedEntity)
-        {
-            addedEntity = false;
-        }
-    }
-
-    public abstract class MainState<T> : AIState<T> where T : WorldObject
-    {
-        public int currentState = -1;
-        public SubState[] states;
-        public abstract class SubState : AIState<T>
-        {
-            public MainState<T> mainState;
-            public SubState(MainState<T> mainState)
-            {
-                this.mainState = mainState;
-            }
-            public override void StartState(T worldObject)
-            {
-                base.StartState(worldObject);
-                mainState.SwitchState(this);
-            }
-        }
-        public override void RunState(T worldObject, float deltaTime, out bool addedEntity)
-        {
-            if (states.Get(currentState, out var subState))
-            {
-                subState.RunState(worldObject,deltaTime,out addedEntity);
+                else
+                {
+                    chosePath = FindNextNode(worldObject, Target);
+                }
             }
             else
             {
-                currentState = -1;
-                addedEntity = false;
+                // if(worldObject.)
+                // if (next.Equals(Target))
+                // {
+                //
+                // }
+                if (World.Current[next] + worldObject.WalkableIndex > 5)
+                {
+                    if (!next.Equals(worldObject.position) || posIndex > 5)
+                    {
+                        chosePath = FindNextNode(worldObject, Target);
+                    }
+                }
+            }
+            return chosePath;
+        }
+        public bool FindNextNode(WorldObject worldObject,CastleGrid target)
+        {
+            var pathLength = World.Current.TryPath(worldObject.position, target, worldObject.WalkableIndex, out var pathAlloc);
+            if (pathLength > 0)
+            {
+                next = pathAlloc[1];
+                softTarget = pathAlloc[pathLength];
+                return true;
+            }
+            return false;
+        }
+    }
+    public class MoveToGrid : MoveTo
+    {
+        public override CastleGrid Target => target;
+        public CastleGrid target;
+
+        public bool TrySetTarget(WorldObject worldObject, CastleGrid target)
+        {
+            chosePath = false;
+            if (FindNextNode(worldObject, target))
+            {
+                this.target = target;
+                chosePath = true;
+            }
+            return chosePath;
+        }
+    }
+
+    public class MoveToTarget : MoveTo
+    {
+        public override CastleGrid Target => target.position;
+        public WorldObject target;
+        public bool TrySetTarget(WorldObject worldObject, WorldObject target)
+        {
+            chosePath = false;
+            if (FindNextNode(worldObject, target.position))
+            {
+                this.target = target;
+                chosePath = true;
+            }
+            return chosePath;
+        }
+    }
+    public abstract class AIState<T> where T : WorldObject
+    {
+        public float timeSinceLastRan,stateTimer,deltaTime;
+        public virtual float SlowTriggerInterval => 0.25f;
+        protected int lastSlowTrigger;
+        public int currentState = -1;
+        public SubState[] states;
+
+        public AIState()
+        {
+            stateTimer = deltaTime = lastSlowTrigger = 0;
+            timeSinceLastRan = Time.time;
+        }
+        public abstract class SubState : PrimitiveState<T>
+        {
+            public AIState<T> mainState;
+            public SubState(AIState<T> mainState)
+            {
+                this.mainState = mainState;
+            }
+            public virtual void StartState(T worldObject)
+            {
+                //base.StartState(worldObject);
+                mainState.SwitchState(this);
+            }
+        }
+        public virtual void RunState(T worldObject, out bool addedEntity)
+        {
+            addedEntity = false;
+            deltaTime = Time.time - timeSinceLastRan;
+            timeSinceLastRan = Time.time;
+            stateTimer += deltaTime;
+            var slowTrigger = Mathf.FloorToInt(stateTimer / SlowTriggerInterval);
+            if (slowTrigger != lastSlowTrigger)
+            {
+                lastSlowTrigger = slowTrigger;
+                SlowTrigger(worldObject, out addedEntity);
+            }
+            if (states.Get(currentState, out var subState) && subState.Run(worldObject, deltaTime, out var added))
+            {
+                addedEntity = addedEntity || added;
+            }
+            else
+            {
+                if (currentState != -1)
+                {
+                    ResetState();
+                }
             }
             if (currentState < 0)
             {
@@ -91,7 +163,7 @@ namespace TinyGame
                 }
             }
         }
-
+        protected virtual void SlowTrigger(T worldObject, out bool addedEntity) => addedEntity = false;
         public bool GetState<TState>(out TState state) where TState : SubState
         {
             for (var i = 0; i < states.Length; i++)
@@ -113,7 +185,7 @@ namespace TinyGame
             }
         }
 
-        public void ResetState()
+        public virtual void ResetState()
         {
             currentState = -1;
             stateTimer = lastSlowTrigger = 0;

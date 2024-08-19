@@ -13,6 +13,13 @@ namespace TinyGame
         {
 
         }
+
+        public virtual void TempSelect(bool isOn)
+        {
+
+        }
+
+        public virtual void Command(CastleGrid grid) { }
     }
     public abstract class WorldSpawn<T> : WorldSpawn where T : WorldObject
     {
@@ -37,7 +44,6 @@ namespace TinyGame
             if (worldObject != null)
             {
                 UpdateSprites();
-                //transform.position = worldObject.virtualPosition;
             }
         }
 

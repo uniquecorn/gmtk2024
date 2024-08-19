@@ -67,20 +67,27 @@ namespace TinyGame
                 GetChunk(out var localPosition).SubtractGIndex(localPosition,WalkableIndex);
                 this.position = newPos;
                 GetChunk(out localPosition).AddGIndex(localPosition,WalkableIndex);
-                if (Spawned)
+                if (classification != Classification.PlayerControl)
                 {
-                    if (!World.Current.IsRendered(ChunkPosition))
+                    if (Spawned)
                     {
-                        Despawn();
+                        if (!World.Current.IsRendered(ChunkPosition))
+                        {
+                            Despawn();
+                        }
+                    }
+                    else
+                    {
+                        if (World.Current.IsRendered(ChunkPosition))
+                        {
+                            Spawn(out _);
+                        }
                     }
                 }
-                else
-                {
-                    if (World.Current.IsRendered(ChunkPosition))
-                    {
-                        Spawn(out _);
-                    }
-                }
+            }
+            if (IsSpawned(out var spawn))
+            {
+                spawn.transform.position = virtualPosition;
             }
             distanceToTarget = distanceRemaining - distanceToMove;
             return false;
@@ -97,13 +104,14 @@ namespace TinyGame
 
     public abstract class WorldObject<T,T2> : WorldObject where T : WorldSpawn<T2> where T2 : WorldObject<T,T2>
     {
-        public abstract MainState<T2> DefaultState { get; }
-        public MainState<T2> CurrentState;
+        public abstract AIState<T2> DefaultState { get; }
+        public AIState<T2> CurrentState;
         public T spawnedObject;
         public override void Init(CastleGrid position)
         {
             base.Init(position);
             CurrentState = DefaultState;
+            CurrentState.ResetState();
         }
 
         public override bool IsSpawned(out WorldSpawn spawn)
@@ -135,7 +143,11 @@ namespace TinyGame
             spawn = spawnedObject = s;
         }
         protected abstract void SpawnStrong(out T spawn);
-        public override void Tick(out bool addedEntity) => CurrentState.Run(this, out addedEntity);
+        public override void Tick(out bool addedEntity)
+        {
+            if (this is T2 strongObject) CurrentState.RunState(strongObject, out addedEntity);
+            else addedEntity = false;
+        }
 
         public override void Despawn()
         {

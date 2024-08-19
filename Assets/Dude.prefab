@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   transform: {fileID: 1566104270775283581}
   collider: {fileID: 0}
+  spriteRenderer: {fileID: 8818725891221182734}
 --- !u!1 &6294856619558694063
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +100,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 2c6a03b8f7da24d40951e39f2ea32925, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -120,7 +121,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 828059693, guid: f63bf4816420e784db71fedd95e3879f, type: 3}
+  m_Sprite: {fileID: -392689644, guid: 34c2a5488650a4985b39f80993093b7b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
