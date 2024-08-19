@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace TinyGame
 {
-    [GlobalConfig("Assets/Resources"),CreateAssetMenu]
-    public class WorldSettings : GlobalConfig<WorldSettings>
+    [CreateAssetMenu]
+    public class WorldSettings : ScriptableObject
     {
         public Material terrainMaterial;
         public Color waterColor, landColor;

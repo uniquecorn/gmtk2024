@@ -21,11 +21,10 @@ namespace TinyGame
             chunkTransform = new GameObject().transform;
             meshFilter = chunkTransform.gameObject.AddComponent<MeshFilter>();
             meshRenderer = chunkTransform.gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = WorldSettings.Instance.terrainMaterial;
-            meshRenderer.sharedMaterial.color = WorldSettings.Instance.landColor;
+            meshRenderer.sharedMaterial = Game.instance.settings.terrainMaterial;
             meshFilter.mesh = mesh = new Mesh();
-            vertices = new List<Vector3>();
-            triangles = new List<int>();
+            vertices = new List<Vector3>(Chunk.ChunkMag);
+            triangles = new List<int>(Chunk.ChunkMag);
         }
 
         public void Render(Chunk chunk)

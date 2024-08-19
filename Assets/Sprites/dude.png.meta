@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f63bf4816420e784db71fedd95e3879f
+guid: 34c2a5488650a4985b39f80993093b7b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -46,8 +46,8 @@ TextureImporter:
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 9
-  spritePivot: {x: 0.5, y: 0.122892566}
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -63,9 +63,9 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 1
+  applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -107,6 +107,19 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -123,64 +136,43 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tree_0
+      name: dude_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 11
-        width: 51
-        height: 113
-      alignment: 9
-      pivot: {x: 0.5388113, y: 0.04707011}
+        x: 0
+        y: 0
+        width: 64
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0103ebc890e3243b69fc280d573ee4b9
-      internalID: -2045703934
+      spriteID: 2927724859d2e4b6c86d21727698f054
+      internalID: -392689644
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tree_1
+      name: dude_1
       rect:
         serializedVersion: 2
-        x: 71
-        y: 13
-        width: 46
-        height: 111
-      alignment: 9
-      pivot: {x: 0.5425576, y: 0.029693278}
+        x: 64
+        y: 0
+        width: 64
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f41797cf1d1b745069f3c20db4167700
-      internalID: 709037255
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: tree_2
-      rect:
-        serializedVersion: 2
-        x: 211
-        y: 7
-        width: 38
-        height: 57
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cdba86d87a44346fbb31a5929843dd16
-      internalID: 828059693
+      spriteID: 7fff9fecfb0eb434f898970da759e5a3
+      internalID: 1179608149
       vertices: []
       indices: 
       edges: []
@@ -188,17 +180,16 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2de910ba013cff5449bb73805307311b
-    internalID: -590181477
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      tree_0: -2045703934
-      tree_1: 709037255
-      tree_2: 828059693
+      dude_0: -392689644
+      dude_1: 1179608149
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

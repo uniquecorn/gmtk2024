@@ -7,9 +7,11 @@ namespace TinyGame
 {
     public class PersonObject : WorldObject<PersonSpawn,PersonObject>
     {
+        public ToolObject lHand;
         public static int[] randomNumAlloc;
-        public override AIState DefaultState => new PersonAI();
-        public override float Speed => 10;
+        public override Classification classification => Classification.PlayerControl;
+        public override MainState<PersonObject> DefaultState => new PersonAI();
+        public override float Speed => 2;
         public override int MaxHealth => 4;
         public override int WalkableIndex => 1;
 
@@ -26,85 +28,93 @@ namespace TinyGame
         }
         protected override void SpawnStrong(out PersonSpawn spawn)
         {
-            spawn = Object.Instantiate(WorldSettings.Instance.personPrefab);
+            spawn = Object.Instantiate(Game.instance.settings.personPrefab);
         }
-        public class PersonAI : AIState<PersonObject>
+        public class PersonAI : MainState<PersonObject>
         {
-            public CastleGrid target, next;
-            public bool chosePath;
-
-            public override AIState RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
+            public PersonAI()
             {
-                addedEntity = false;
-                if (!chosePath)
+                states = new SubState[]
                 {
-                    ChooseNewTarget(worldObject);
-                }
-
-                if (!chosePath || next == target)
+                    new Wander(this),
+                };
+            }
+            public override void RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
+            {
+                base.RunState(worldObject, deltaTime, out addedEntity);
+                if (currentState < 0)
                 {
-                    if (worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _))
+                    if (stateTimer > 4)
                     {
-                        ChooseNewTarget(worldObject);
+                        SwitchState(0,worldObject);
                     }
                 }
-                else
+            }
+            public class Wander : SubState
+            {
+                public bool chosePath;
+                public CastleGrid target, next;
+                public Wander(MainState<PersonObject> mainState) : base(mainState) { }
+                public override void StartState(PersonObject worldObject)
                 {
+                    ChooseNewTarget(worldObject);
+                    base.StartState(worldObject);
+                }
+
+                public override void RunState(PersonObject worldObject, float deltaTime, out bool addedEntity)
+                {
+                    addedEntity = false;
+                    if (!chosePath)
+                    {
+                        chosePath = ChooseNewTarget(worldObject);
+                        if (!chosePath)
+                        {
+                            mainState.ResetState();
+                            return;
+                        }
+                    }
                     var targetPos = next.GetPosition().Translate(0.5f, 0.5f);
                     if (worldObject.Move(targetPos, deltaTime, out _))
                     {
-                        var p = World.Current.TryPath(next,target,worldObject.WalkableIndex, out var pathAlloc);
-                        if (p > 0) next = pathAlloc[1];
-                        else chosePath = false;
+                        if (target.Equals(next))
+                        {
+                            mainState.ResetState();
+                        }
+                        else
+                        {
+                            var p = World.Current.TryPath(next,target,worldObject.WalkableIndex, out var pathAlloc);
+                            if (p > 0) next = pathAlloc[1];
+                            else
+                            {
+                                mainState.ResetState();
+                            }
+                        }
                     }
                 }
-                // return this;
-                // if (worldObject.position.Equals(target))
-                // {
-                //     if (worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _))
-                //     {
-                //         Debug.Log("on target");
-                //         ChooseNewTarget(worldObject);
-                //     }
-                // }
-                // else
-                // {
-                //     if (World.Current.TryPath(worldObject.position, target, worldObject.WalkableIndex,
-                //             out path))
-                //     {
-                //         worldObject.Move(path[1].GetPosition().Translate(0.5f,0.5f),deltaTime,out _);
-                //     }
-                //     else
-                //     {
-                //         ChooseNewTarget(worldObject);
-                //     }
-                // }
-                return this;
-            }
 
-            public void ChooseNewTarget(PersonObject worldObject)
-            {
-                chosePath = false;
-                //Debug.Log("choose new target");
-                var tries = 0;
-                foreach (var i in randomNumAlloc.Shuffle(World.Current.rng))
+                public bool ChooseNewTarget(PersonObject worldObject)
                 {
-                    var end = worldObject.position.Shift(CastleGrid.FromFlat(i,10).Subtract(5,5));
-                    if(end == worldObject.position)continue;
-                    var pathLength = World.Current.TryPath(worldObject.position, end, worldObject.WalkableIndex, out var pathAlloc);
-                    if(pathLength > 0)
+                    //Debug.Log("choose new target");
+                    var tries = 0;
+                    foreach (var i in randomNumAlloc.Shuffle(World.Current.rng))
                     {
-                        next = pathAlloc[1];
-                        target = end;
-                        target = end;
-                        chosePath = true;
-                        break;
+                        var end = worldObject.position.Shift(CastleGrid.FromFlat(i,10).Subtract(5,5));
+                        if(end == worldObject.position)continue;
+                        var pathLength = World.Current.TryPath(worldObject.position, end, worldObject.WalkableIndex, out var pathAlloc);
+                        if(pathLength > 0)
+                        {
+                            next = pathAlloc[1];
+                            target = end;
+                            target = end;
+                            return true;
+                        }
+                        else
+                        {
+                            tries++;
+                            if(tries > 3) break;
+                        }
                     }
-                    else
-                    {
-                        tries++;
-                        if(tries > 3) break;
-                    }
+                    return false;
                 }
             }
         }

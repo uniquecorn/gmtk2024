@@ -1,5 +1,7 @@
+using System.Threading;
 using Castle;
 using Castle.Core;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,9 +9,10 @@ namespace TinyGame
 {
     public abstract class WorldSpawn : CastleObject
     {
-        public virtual void OnSpawn() { }
+        public virtual void OnSpawn()
+        {
 
-
+        }
     }
     public abstract class WorldSpawn<T> : WorldSpawn where T : WorldObject
     {

@@ -6,7 +6,7 @@ namespace TinyGame
 {
     public class TreeObject : WorldObject<TreeSpawn,TreeObject>
     {
-        public override bool Immovable => true;
+        public override Classification classification => Classification.Immovable;
         public override int WalkableIndex => numTrees;
         public int numTrees;
         public SubTree[] subTrees;
@@ -27,17 +27,22 @@ namespace TinyGame
             }
         }
         public override Vector3 GetVectorPosition() => position.AsVector().Translate(0.5f, 0.5f);
-        public override AIState DefaultState => new TreeAI();
+        public override MainState<TreeObject> DefaultState => new TreeAI();
         public override int MaxHealth { get; }
 
         protected override void SpawnStrong(out TreeSpawn spawn)
         {
-            spawn = Object.Instantiate(WorldSettings.Instance.treePrefab);
+            spawn = Object.Instantiate(Game.instance.settings.treePrefab);
         }
         public void GrowNewTree()
         {
+            for (var i = 0; i < subTrees.Length; i++)
+            {
+                if(subTrees[i].baby) return;
+            }
             if (numTrees < subTrees.Length)
             {
+                GetChunk(out var localPosition).AddGIndex(localPosition);
                 subTrees[numTrees].baby = true;
                 subTrees[numTrees].time = 0f;
                 numTrees++;
@@ -46,21 +51,20 @@ namespace TinyGame
                 {
                     subTrees[i].position = positions[i];
                 }
-                if (IsSpawned(out var spawn)) spawn.SetTreeSprites();
+                if (IsSpawned(out var spawn)) spawn.SetTreeSprites().Forget();
             }
         }
-
         public void SetTreeCount(int treeCount)
         {
             numTrees = treeCount;
             position.GetPositions(numTrees, out var positions);
             for (var i = 0; i < numTrees; i++)
             {
-                subTrees[numTrees].baby = false;
-                subTrees[numTrees].position = positions[i];
+                subTrees[i].baby = false;
+                subTrees[i].position = positions[i];
             }
         }
-        public class TreeAI : AIState<TreeObject>
+        public class TreeAI : MainState<TreeObject>
         {
             public float growInterval;
             public override float SlowTriggerInterval => growInterval;
@@ -68,10 +72,9 @@ namespace TinyGame
             {
                RollGrowInterval();
             }
-            public override AIState RunState(TreeObject worldObject, float deltaTime, out bool addedEntity)
+            public override void RunState(TreeObject worldObject, float deltaTime, out bool addedEntity)
             {
                 addedEntity = false;
-                var spawned = worldObject.IsSpawned(out var spawn);
                 for (var i = 0; i < worldObject.numTrees; i++)
                 {
                     worldObject.subTrees[i].time += deltaTime;
@@ -81,19 +84,12 @@ namespace TinyGame
                         {
                             worldObject.subTrees[i].baby = false;
                         }
-                        if (spawned)
-                        {
-                            spawn.spriteRenderers[i].transform.localScale =
-                                Vector3.one * Mathf.Min(1, worldObject.subTrees[i].time);
-                        }
                     }
                 }
-                return this;
             }
             protected override void SlowTrigger(TreeObject worldObject, out bool addedEntity)
             {
                 addedEntity = false;
-
                 if (World.Current.rng.Next(10) == 0)
                 {
                     var growOutside = worldObject.numTrees >= 5 || Random.value < (0.2f * worldObject.numTrees);

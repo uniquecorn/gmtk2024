@@ -7,9 +7,13 @@ namespace TinyGame
     [System.Serializable]
     public abstract class WorldObject
     {
-        public virtual bool Immovable => false;
-        public AIState CurrentState;
-        public abstract AIState DefaultState { get; }
+        public enum Classification
+        {
+            Immovable,
+            Entity,
+            PlayerControl
+        }
+        public abstract Classification classification { get; }
         public int health;
         public abstract int MaxHealth { get; }
         public CastleGrid position;
@@ -23,17 +27,24 @@ namespace TinyGame
         public virtual void Init(CastleGrid position)
         {
             this.position = position;
-            CurrentState = DefaultState;
             health = MaxHealth;
             virtualPosition = GetVectorPosition();
         }
-        public virtual void Tick(out bool addedEntity) => CurrentState = CurrentState.Run(this, out addedEntity);
+
+        public abstract void Tick(out bool addedEntity);
+
         public bool InChunk(Chunk chunk, out CastleGrid localPosition)
         {
             var chunkPosition = Chunk.ChunkPosition(position, out localPosition);
             return chunkPosition == chunk.origin;
         }
         public Chunk GetChunk() => World.Current.GetChunk(ChunkPosition);
+        public Chunk GetChunk(out CastleGrid localPosition)
+        {
+            var chunkPosition = Chunk.ChunkPosition(position,out localPosition);
+            return World.Current.GetChunk(chunkPosition);
+        }
+
         public CastleGrid ChunkPosition => Chunk.ChunkPosition(position);
         public abstract void Spawn(out WorldSpawn spawn);
         public bool Move(Vector3 position,float deltaTime,out float distanceToTarget)
@@ -53,7 +64,9 @@ namespace TinyGame
             var newPos = CastleGrid.FromVector(virtualPosition);
             if (this.position != newPos)
             {
+                GetChunk(out var localPosition).SubtractGIndex(localPosition,WalkableIndex);
                 this.position = newPos;
+                GetChunk(out localPosition).AddGIndex(localPosition,WalkableIndex);
                 if (Spawned)
                 {
                     if (!World.Current.IsRendered(ChunkPosition))
@@ -69,7 +82,6 @@ namespace TinyGame
                     }
                 }
             }
-
             distanceToTarget = distanceRemaining - distanceToMove;
             return false;
         }
@@ -85,7 +97,15 @@ namespace TinyGame
 
     public abstract class WorldObject<T,T2> : WorldObject where T : WorldSpawn<T2> where T2 : WorldObject<T,T2>
     {
+        public abstract MainState<T2> DefaultState { get; }
+        public MainState<T2> CurrentState;
         public T spawnedObject;
+        public override void Init(CastleGrid position)
+        {
+            base.Init(position);
+            CurrentState = DefaultState;
+        }
+
         public override bool IsSpawned(out WorldSpawn spawn)
         {
             if (IsSpawned(out T s))
@@ -115,6 +135,8 @@ namespace TinyGame
             spawn = spawnedObject = s;
         }
         protected abstract void SpawnStrong(out T spawn);
+        public override void Tick(out bool addedEntity) => CurrentState.Run(this, out addedEntity);
+
         public override void Despawn()
         {
             spawned = false;

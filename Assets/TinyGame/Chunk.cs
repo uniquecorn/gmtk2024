@@ -9,19 +9,19 @@ namespace TinyGame
     public class Chunk
     {
         private int[] _gridIndex;
+        private int[] eIndex;
         public const int ChunkSize = 32;
         public const int ChunkMag = ChunkSize * ChunkSize;
         public const int NodeSize = ChunkSize+1;
         public CastleGrid origin;
         public bool[] hasTerrain;
         public int[] voxelBits;
-        private float[] indexAlloc;
+        private static float[] indexAlloc;
         private int calculateFrameCount;
         private static CastleGrid[] searchAlloc,pathAlloc;
         public List<WorldObject> immovableObjects;
         public static void Make(CastleGrid origin, World world, out Chunk chunk)
         {
-            World.Current.chunksMade++;
             chunk = new Chunk(origin);
             world.chunks.Add(origin,chunk);
             chunk.MakeObjects();
@@ -30,7 +30,8 @@ namespace TinyGame
         {
             this.origin = origin;
             _gridIndex = new int[ChunkMag];
-            indexAlloc = new float[ChunkMag];
+            eIndex = new int[ChunkMag];
+            if(indexAlloc == null) indexAlloc = new float[ChunkMag];
             hasTerrain = new bool[NodeSize * NodeSize];
             voxelBits = new int[ChunkMag];
             searchAlloc = new CastleGrid[ChunkMag];
@@ -75,6 +76,7 @@ namespace TinyGame
         public void MakeObjects()
         {
             MakeTrees();
+            CalculateGridIndex();
         }
 
         public void MakeTrees()
@@ -137,6 +139,15 @@ namespace TinyGame
                 }
                 return this[x * ChunkSize + y];
             }
+        }
+
+        public void AddGIndex(CastleGrid pos,int value = 1)
+        {
+            _gridIndex[pos.x * ChunkSize + pos.y]+=value;
+        }
+        public void SubtractGIndex(CastleGrid pos,int value = 1)
+        {
+            _gridIndex[pos.x * ChunkSize + pos.y] -= value;
         }
         public CastleGrid GetRelativeChunkPosition(CastleGrid grid, out CastleGrid chunkPosition) => GetRelativeChunkPosition(grid.x, grid.y, out chunkPosition);
         public CastleGrid GetRelativeChunkPosition(int x, int y, out CastleGrid chunkPosition)
