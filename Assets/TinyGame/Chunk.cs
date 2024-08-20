@@ -19,7 +19,7 @@ namespace TinyGame
         private static float[] indexAlloc;
         private int calculateFrameCount;
         private static CastleGrid[] searchAlloc,pathAlloc;
-        public List<WorldObject> immovableObjects;
+        public List<ImmovableObject> immovableObjects;
         public static void Make(CastleGrid origin, World world, out Chunk chunk)
         {
             chunk = new Chunk(origin);
@@ -36,7 +36,7 @@ namespace TinyGame
             voxelBits = new int[ChunkMag];
             searchAlloc = new CastleGrid[ChunkMag];
             pathAlloc = new CastleGrid[ChunkMag];
-            immovableObjects = new List<WorldObject>(ChunkSize);
+            immovableObjects = new List<ImmovableObject>(ChunkSize);
             var noise = World.Current.noise.GenerateNoiseMap(NodeSize, NodeSize,
                 (origin * ChunkSize).AsVector().NegY());
             for (var x = 0; x < NodeSize; x++)
@@ -244,16 +244,6 @@ namespace TinyGame
             {
                 if (!e.Spawned) continue;
                 e.Despawn();
-            }
-        }
-
-        public void UpdateImmovableObjects()
-        {
-            var c = immovableObjects.Count;
-            for (var i = 0; i < c; i++)
-            {
-                immovableObjects[i].Tick(out var addedEntity);
-                if (addedEntity) c = immovableObjects.Count;
             }
         }
         public int MakeLocalPath(CastleGrid start, CastleGrid end, int objectValue, out CastleGrid[] path)

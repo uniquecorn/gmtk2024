@@ -43,8 +43,9 @@ namespace TinyGame
             c = 0;
             if (Transform.rect.size.sqrMagnitude > 0.001f)
             {
-                foreach (var e in World.Current.playerEntities)
+                foreach (var e in World.Current.entities)
                 {
+                    if(!e.PlayerControlled)continue;
                     if (!Transform.rect.Contains(e.virtualPosition - transform.position)) continue;
                     if (!e.IsSpawned(out var spawn)) continue;
                     dragAlloc[c] = spawn;

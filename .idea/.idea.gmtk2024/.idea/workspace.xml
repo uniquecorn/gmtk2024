@@ -6,25 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="a4b7e29f-696f-4ceb-ac92-15497e14d182" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gmtk2024/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Core/CastleGrid.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Castle/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Castle/Extensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Dude.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Dude.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Materials/Entity.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/Entity.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Materials/Water.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/Water.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Sprites/dude.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/dude.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Sprites/tree.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/tree.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/AIState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/AIState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Chunk.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/ChunkRender.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/DragSelector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/DragSelector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/EntityObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/EntityObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/ImmovableObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/ImmovableObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/PersonObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/PersonObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/PersonSpawn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/PersonSpawn.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/TreeObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/TreeObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/TreeSpawn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/TreeSpawn.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/World.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/World.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TinyGame/WorldSpawn.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TinyGame/WorldSpawn.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Tree.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Tree.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +118,7 @@
       <workItem from="1723842467924" duration="13089000" />
       <workItem from="1723856153191" duration="38082000" />
       <workItem from="1723930170072" duration="43046000" />
-      <workItem from="1724018568987" duration="46857000" />
+      <workItem from="1724018568987" duration="56171000" />
     </task>
     <servers />
   </component>

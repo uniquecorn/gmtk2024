@@ -8,6 +8,8 @@ namespace TinyGame
 {
     public class PersonSpawn : WorldSpawn<PersonObject>
     {
+        [ShowInInspector]
+        public PersonObject.PersonAI ai => worldObject.CurrentState as PersonObject.PersonAI;
         public SpriteRenderer spriteRenderer;
         private static readonly int FlashColorID = Shader.PropertyToID("_FlashColor");
         private static readonly int OutlineColorID = Shader.PropertyToID("_OutlineColor");

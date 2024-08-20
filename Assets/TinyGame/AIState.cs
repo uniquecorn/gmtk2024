@@ -6,8 +6,8 @@ using UnityEngine;
 namespace TinyGame
 {
     public abstract class AIState { }
-    public abstract class PrimitiveState : PrimitiveState<WorldObject> { }
-    public abstract class PrimitiveState<T> where T : WorldObject
+    public abstract class PrimitiveState : PrimitiveState<EntityObject> { }
+    public abstract class PrimitiveState<T> where T : EntityObject
     {
         public abstract bool Run(T worldObject, float deltaTime, out bool addedEntity);
     }
@@ -16,7 +16,7 @@ namespace TinyGame
         public bool chosePath;
         public CastleGrid next,softTarget;
         public abstract CastleGrid Target { get; }
-        public override bool Run(WorldObject worldObject,float deltaTime, out bool addedEntity)
+        public override bool Run(EntityObject worldObject,float deltaTime, out bool addedEntity)
         {
             addedEntity = false;
             if (!chosePath)
@@ -28,7 +28,14 @@ namespace TinyGame
             var targetPos = next.GetPosition(posIndex,totalIndex).Translate(0.5f, 0.5f);
             if (worldObject.Move(targetPos, deltaTime, out _))
             {
-                if (next.Equals(Target)) return false;
+                if (next.Equals(Target))
+                {
+                    // if (World.Current[Target] > 5 && posIndex >= 5)
+                    // {
+                    //
+                    // }
+                    return false;
+                }
                 if (softTarget.Equals(next))
                 {
                     if (World.Current[Target] + worldObject.WalkableIndex <= 5)
@@ -54,7 +61,7 @@ namespace TinyGame
                 // }
                 if (World.Current[next] + worldObject.WalkableIndex > 5)
                 {
-                    if (!next.Equals(worldObject.position) || posIndex > 5)
+                    if (!next.Equals(worldObject.position) || posIndex >= 5)
                     {
                         chosePath = FindNextNode(worldObject, Target);
                     }
@@ -62,7 +69,7 @@ namespace TinyGame
             }
             return chosePath;
         }
-        public bool FindNextNode(WorldObject worldObject,CastleGrid target)
+        public bool FindNextNode(EntityObject worldObject,CastleGrid target)
         {
             var pathLength = World.Current.TryPath(worldObject.position, target, worldObject.WalkableIndex, out var pathAlloc);
             if (pathLength > 0)
@@ -79,14 +86,10 @@ namespace TinyGame
         public override CastleGrid Target => target;
         public CastleGrid target;
 
-        public bool TrySetTarget(WorldObject worldObject, CastleGrid target)
+        public bool TrySetTarget(EntityObject worldObject, CastleGrid target)
         {
-            chosePath = false;
-            if (FindNextNode(worldObject, target))
-            {
-                this.target = target;
-                chosePath = true;
-            }
+            this.target = target;
+            chosePath = FindNextNode(worldObject, target);
             return chosePath;
         }
     }
@@ -95,7 +98,7 @@ namespace TinyGame
     {
         public override CastleGrid Target => target.position;
         public WorldObject target;
-        public bool TrySetTarget(WorldObject worldObject, WorldObject target)
+        public bool TrySetTarget(EntityObject worldObject, WorldObject target)
         {
             chosePath = false;
             if (FindNextNode(worldObject, target.position))
@@ -106,12 +109,13 @@ namespace TinyGame
             return chosePath;
         }
     }
-    public abstract class AIState<T> where T : WorldObject
+    public abstract class AIState<T> where T : EntityObject
     {
         public float timeSinceLastRan,stateTimer,deltaTime;
         public virtual float SlowTriggerInterval => 0.25f;
         protected int lastSlowTrigger;
         public int currentState = -1;
+        [SerializeReference]
         public SubState[] states;
 
         public AIState()
@@ -157,10 +161,7 @@ namespace TinyGame
             }
             if (currentState < 0)
             {
-                if (worldObject.classification != WorldObject.Classification.Immovable)
-                {
-                    worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _);
-                }
+                worldObject.Move(worldObject.GetVectorPosition(), deltaTime, out _);
             }
         }
         protected virtual void SlowTrigger(T worldObject, out bool addedEntity) => addedEntity = false;

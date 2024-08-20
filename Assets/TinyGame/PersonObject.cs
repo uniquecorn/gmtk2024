@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace TinyGame
 {
-    public class PersonObject : WorldObject<PersonSpawn,PersonObject>
+    public class PersonObject : EntityObject<PersonSpawn,PersonObject>
     {
+        public override bool PlayerControlled => true;
         public ToolObject lHand;
         public static int[] randomNumAlloc;
-        public override Classification classification => Classification.PlayerControl;
-        public override AIState<PersonObject> DefaultState => new PersonAI();
         public override float Speed => 5;
         public override int MaxHealth => 4;
         public override int WalkableIndex => 1;
@@ -25,6 +24,7 @@ namespace TinyGame
         }
         public PersonObject()
         {
+            CurrentState = new PersonAI();
             if (randomNumAlloc == null)
             {
                 randomNumAlloc = new int[100];
@@ -34,10 +34,8 @@ namespace TinyGame
                 }
             }
         }
-        protected override void SpawnStrong(out PersonSpawn spawn)
-        {
-            spawn = Object.Instantiate(Game.instance.settings.personPrefab);
-        }
+        protected override PersonSpawn SpawnStrong() => Object.Instantiate(Game.instance.settings.personPrefab);
+        [System.Serializable]
         public class PersonAI : AIState<PersonObject>
         {
             public float nextActionTime;

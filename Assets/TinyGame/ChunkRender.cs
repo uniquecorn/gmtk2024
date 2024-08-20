@@ -101,7 +101,7 @@ namespace TinyGame
             foreach (var e in chunk.immovableObjects)
             {
                 if (e.Spawned) continue;
-                e.Spawn(out var s);
+                var s = e.Spawn();
                 s.transform.SetParent(chunkTransform);
             }
             rendered = true;

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Castle;
 using Castle.Core;
 using Sirenix.OdinInspector;
@@ -17,6 +18,7 @@ namespace TinyGame
         public Settings castleSettings;
         public float distance;
         private WorldSpawn[] selectAlloc;
+
         private int selected;
         void Start()
         {
@@ -45,7 +47,6 @@ namespace TinyGame
 
         private void Update()
         {
-
             CastleManager.FUpdate();
             switch (CastleManager.CurrentTapState)
             {

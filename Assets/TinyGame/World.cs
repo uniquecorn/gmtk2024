@@ -17,7 +17,9 @@ namespace TinyGame
         public static CastleGrid[] pathAlloc;
         [System.NonSerialized]
         public static WorldObject[] objectAlloc;
-        public List<WorldObject> entities,playerEntities;
+
+        public List<EntityObject> entities;
+        //playerEntities;
         [ShowInInspector]
         public int entityCount => entities.Count;
         public const int DrawDistance = 2;
@@ -32,8 +34,7 @@ namespace TinyGame
             chunks = new Dictionary<CastleGrid, Chunk>(Chunk.ChunkSize);
             objectAlloc = new WorldObject[Chunk.ChunkSize * Chunk.ChunkSize];
             renderedChunks = new ChunkRender[ChunksDrawn];
-            entities = new List<WorldObject>(Chunk.ChunkSize);
-            playerEntities = new List<WorldObject>(Chunk.ChunkSize);
+            entities = new List<EntityObject>(Chunk.ChunkSize);
             pathAlloc = new CastleGrid[Chunk.ChunkSize * Chunk.ChunkSize * Chunk.ChunkSize];
             for (var i = 0; i < renderedChunks.Length; i++)
             {
@@ -88,6 +89,28 @@ namespace TinyGame
                     }
                 }
             }
+            foreach (var e in entities)
+            {
+                if(e.PlayerControlled) continue;
+                var chunkPosition = e.ChunkPosition;
+                if (chunkPosition.x < chunk.origin.x - DrawDistance ||
+                    chunkPosition.x > chunk.origin.x + DrawDistance ||
+                    chunkPosition.y > chunk.origin.y + DrawDistance ||
+                    chunkPosition.y < chunk.origin.y - DrawDistance)
+                {
+                    if (e.Spawned)
+                    {
+                        e.Despawn();
+                    }
+                }
+                else
+                {
+                    if (!e.Spawned)
+                    {
+                        e.Spawn();
+                    }
+                }
+            }
         }
 
         public bool IsRendered(CastleGrid origin, out ChunkRender render)
@@ -116,10 +139,8 @@ namespace TinyGame
             }
             return false;
         }
-        public void GetPositionIndex(WorldObject worldObject,out int posIndex, out int totalIndex)
-        {
+        public void GetPositionIndex(WorldObject worldObject,out int posIndex, out int totalIndex) =>
             GetPositionIndex(worldObject,worldObject.position,out posIndex, out totalIndex);
-        }
 
         public void GetPositionIndex(WorldObject worldObject, CastleGrid position, out int posIndex, out int totalIndex)
         {
@@ -155,51 +176,34 @@ namespace TinyGame
                     }
                 }
             }
-            foreach (var e in playerEntities)
-            {
-                if (worldObject == e)
-                {
-                    current = total;
-                    total++;
-                }
-                else
-                {
-                    if (e.position.Equals(position))
-                    {
-                        total++;
-                    }
-                }
-            }
             posIndex = current;
             totalIndex = total;
         }
         public T MakeWorldObject<T>(CastleGrid worldPosition) where T : WorldObject, new()
         {
             var o = new T();
-            switch (o.classification)
+            switch (o)
             {
-                case WorldObject.Classification.Immovable:
+                case ImmovableObject immovableObject:
                     var c = Chunk.ChunkPosition(worldPosition);
-                    GetChunk(c).immovableObjects.Add(o);
-                    o.Init(worldPosition);
+                    GetChunk(c).immovableObjects.Add(immovableObject);
+                    immovableObject.Init(worldPosition);
                     if (IsRendered(c, out var render) && !o.Spawned)
                     {
-                        o.Spawn(out var s);
+                        var s = immovableObject.Spawn();
                         s.transform.SetParent(render.chunkTransform);
                     }
                     break;
-                case WorldObject.Classification.Entity:
-                    entities.Add(o);
-                    o.Init(worldPosition);
-                    if (IsRendered(o.ChunkPosition, out _) && !o.Spawned)
+                case EntityObject entityObject:
+                    entities.Add(entityObject);
+                    entityObject.Init(worldPosition);
+                    if (!entityObject.Spawned)
                     {
-                        o.Spawn(out _);
+                        if (entityObject.PlayerControlled || IsRendered(entityObject.ChunkPosition, out _))
+                        {
+                            entityObject.Spawn();
+                        }
                     }
-                    break;
-                case WorldObject.Classification.PlayerControl:
-                    playerEntities.Add(o);
-                    o.Init(worldPosition);
-                    o.Spawn(out _);
                     break;
             }
             return o;
@@ -214,7 +218,7 @@ namespace TinyGame
             }
             if ((this[end] + objectValue) > 5)
             {
-                for (var i = 1; i < 20; i++)
+                for (var i = 1; i < Chunk.ChunkMag; i++)
                 {
                     var v = end.Spiral(i);
                     if (this[v] + objectValue <= 5)
@@ -289,6 +293,7 @@ namespace TinyGame
                     }
                     else
                     {
+
                         var midPoint = Chunk.ChunkSize / 2;
                         var o = d switch
                         {
@@ -428,52 +433,28 @@ namespace TinyGame
                     num++;
                 }
             }
-            foreach (var e in playerEntities)
-            {
-                for (var i = 0; i < gridsToSearch; i++)
-                {
-                    if (!e.position.Equals(path[i])) continue;
-                    objectAlloc[num] = e;
-                    num++;
-                }
-            }
             objects = objectAlloc;
             return num;
         }
         public void UpdateEntities(CastleGrid focusedChunk)
         {
-            var c = 0;
-            var keys = chunks.Keys.ToArray();
-            foreach (var key in keys)
+            var c = entities.Count;
+            for (var i = 0; i < c; i++)
             {
-                var distance = focusedChunk.Distance(key);
+                var distance = entities[i].ChunkPosition.Distance(focusedChunk);
                 if (distance <= 2)
                 {
-                    chunks[key].UpdateImmovableObjects();
+                    entities[i].Tick(out var addedEntity);
+                    if (addedEntity) c = entities.Count;
                 }
                 else if (distance <= 5)
                 {
                     if ((Time.frameCount % (distance * 5)) == 0)
                     {
-                        chunks[key].UpdateImmovableObjects();
+                        entities[i].Tick(out var addedEntity);
+                        if (addedEntity) c = entities.Count;
                     }
                 }
-            }
-            c = playerEntities.Count;
-            for (var i = 0; i < c; i++)
-            {
-                var distance = playerEntities[i].ChunkPosition.Distance(focusedChunk);
-                if(distance > 5) continue;
-                playerEntities[i].Tick(out var addedEntity);
-                if (addedEntity) c = playerEntities.Count;
-            }
-            c = entities.Count;
-            for (var i = 0; i < c; i++)
-            {
-                var distance = entities[i].ChunkPosition.Distance(focusedChunk);
-                if(distance > 5) continue;
-                entities[i].Tick(out var addedEntity);
-                if (addedEntity) c = entities.Count;
             }
         }
         public bool GetFirstImmovableEntityAt<T>(CastleGrid position, out T entity) where T : WorldObject
